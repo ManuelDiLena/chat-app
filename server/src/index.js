@@ -6,18 +6,28 @@ const router = require('./router');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketio(server);
+
+const io = socketio(server, {
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST']
+  }
+});
 
 const PORT = process.env.PORT || 5000;
 
 app.use(router);
 
 io.on('connection', (socket) => {
-  socket.emit('INIT', ('Welcome!'));
+  console.log('enter');
+  socket.emit('enter', 'Welcome!');
 
-  socket.on('SEND_MESSAGE', function(data) {
-    console.log(data);
-    io.emit('RECEIVE_MESSAGE', data);
+  socket.on('sendMessage', (message) => {
+    io.emit('receiveMessage', message);
+  })
+
+  socket.on('disconnect', () => {
+    console.log('exit');
   })
 });
 

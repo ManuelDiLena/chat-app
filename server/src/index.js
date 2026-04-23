@@ -18,19 +18,26 @@ const PORT = process.env.PORT || 5000;
 
 app.use(router);
 
-io.on('connection', (socket) => {
-  io.emit('message', 'Welcome!');
+io.on('connect', (socket) => {
+  console.log('New WebSocket connection');
 
-  socket.broadcast.emit('message', 'A new user has joined!');
+  socket.on('join', ({ name, room }) => {
+    socket.join(room);
+    socket.emit('message', `Welcome ${name}, to room ${room}`);
+    socket.broadcast.to(room).emit('message', `${name} has joined!`);
+  });
+
 
   socket.on('sendMessage', (message, callback) => {
+    console.log('Reach send message');
     io.emit('receiveMessage', message);
+    io.to('test').emit('message', message);
     callback();
-  })
+  });
 
   socket.on('disconnect', () => {
     io.emit('message', 'User has left!');
-  })
+  });
 });
 
 server.listen(PORT, () => console.log(`Server has started on port ${PORT}`));

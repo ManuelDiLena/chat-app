@@ -13,12 +13,16 @@ const Chat = () => {
     socket.on('enter', (welcomeMessage) => {
       console.log(welcomeMessage);
     });
+    socket.on('message', (message) => {
+      console.log(message);
+    });
     socket.on('receiveMessage', (message) => {
       console.log('receiveMessage', message);
       setMessages(prevMessages => [...prevMessages, message]);
     });
     return () => {
       socket.off('receiveMessage');
+      socket.off('message');
       socket.off('enter');
     };
   }, []);
@@ -27,7 +31,9 @@ const Chat = () => {
 
   const sendMessage = (e) => {
     e.preventDefault();
-    socket.emit('sendMessage', message);
+    socket.emit('sendMessage', message, () => {
+      console.log('Message sucessfully sent!');
+    });
     setMessage('');
   };
 

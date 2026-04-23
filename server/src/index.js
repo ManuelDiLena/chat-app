@@ -19,15 +19,17 @@ const PORT = process.env.PORT || 5000;
 app.use(router);
 
 io.on('connection', (socket) => {
-  console.log('enter');
-  socket.emit('enter', 'Welcome!');
+  io.emit('message', 'Welcome!');
 
-  socket.on('sendMessage', (message) => {
+  socket.broadcast.emit('message', 'A new user has joined!');
+
+  socket.on('sendMessage', (message, callback) => {
     io.emit('receiveMessage', message);
+    callback();
   })
 
   socket.on('disconnect', () => {
-    console.log('exit');
+    io.emit('message', 'User has left!');
   })
 });
 

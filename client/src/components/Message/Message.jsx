@@ -1,10 +1,10 @@
 import React from 'react';
 import './Message.css';
 
-const Message = ({ message }) => {
+const Message = ({ message: { text, user } }) => {
   return (
     <div className='message'>
-      {message}
+      {user} - {text}
     </div>
   );
 }

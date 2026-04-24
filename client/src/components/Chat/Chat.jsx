@@ -11,7 +11,7 @@ const Chat = () => {
   const location = useLocation();
   const ENDPOINT = 'http://localhost:5000';
   
-  const [message, setMessage] = useState({ text: '', delivered: false, read: false });
+  const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -38,9 +38,8 @@ const Chat = () => {
   const sendMessage = (e) => {
     e.preventDefault();
     socket.emit('sendMessage', message, () => {
-      setMessage({ ...message, text: message.text, delivered: true });
+      setMessage('');
     });
-    setMessage({ text: '', delivered: false, read: false });
   };
 
   return (
@@ -48,10 +47,10 @@ const Chat = () => {
       <div className='paper'>
         <div className='messages'>
           <h1>Messages</h1>
-          {messages.map(({text}, i) => <Message key={i} message={text} />)}
+          {messages.map((message, i) => <Message key={i} message={message} />)}
         </div>
         <form className='form'>
-          <input className='input' type='text' placeholder='Message' value={message.text} onChange={({ target: { value } }) => setMessage(prev => ({ ...prev, text: value }))} />
+          <input className='input' type='text' placeholder='Message' value={message.text} onChange={({ target: { value } }) => setMessage(value)} />
           <button className='btn' type='submit' onClick={sendMessage}>Send</button>
         </form>
       </div>

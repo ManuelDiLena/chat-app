@@ -2,6 +2,8 @@ const http = require('http');
 const express = require('express');
 const socketio = require('socket.io');
 
+const { addUser, removeUser, getUser, getUserInRoom } = require('./users');
+
 const router = require('./router');
 
 const app = express();
@@ -19,24 +21,24 @@ const PORT = process.env.PORT || 5000;
 app.use(router);
 
 io.on('connect', (socket) => {
-  console.log('New WebSocket connection');
-
-  socket.on('join', ({ name, room }) => {
-    socket.join(room);
-    socket.emit('message', `${name}, welcome to room ${room}`);
-    socket.broadcast.to(room).emit('message', `${name} has joined!`);
+  socket.on('join', ({ name, room }, callback) => {
+    const userExists = getUser(socket.id);
+    if (userExists) return callback('User already connected');
+    const { error, user } = addUser({ id: socket.id, name, room });
+    if (error) return callback(error);
+    socket.join(user.room);
+    socket.emit('message', { text: `${user.name}, welcome to room ${user.room}.` });
+    socket.broadcast.to(user.room).emit('message', { text: `${user.name} has joined!` });
   });
 
-
   socket.on('sendMessage', (message, callback) => {
-    console.log('Reach send message');
     io.emit('message', message);
-    io.to('test').emit('message', message);
     callback();
   });
 
   socket.on('disconnect', () => {
-    io.emit('message', 'User has left!');
+    const user = removeUser(socket.id);
+    if (user) io.to(user.room).emit('message', { text: `${user.name} has left.` });
   });
 });
 

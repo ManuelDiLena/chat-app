@@ -23,14 +23,14 @@ io.on('connect', (socket) => {
 
   socket.on('join', ({ name, room }) => {
     socket.join(room);
-    socket.emit('message', `Welcome ${name}, to room ${room}`);
+    socket.emit('message', `${name}, welcome to room ${room}`);
     socket.broadcast.to(room).emit('message', `${name} has joined!`);
   });
 
 
   socket.on('sendMessage', (message, callback) => {
     console.log('Reach send message');
-    io.emit('receiveMessage', message);
+    io.emit('message', message);
     io.to('test').emit('message', message);
     callback();
   });

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import io from 'socket.io-client';
 import queryString from 'query-string';
 import './Chat.css';
@@ -7,7 +8,9 @@ import Message from '../Message/Message';
 let socket;
 
 const Chat = () => {
+  const location = useLocation();
   const ENDPOINT = 'localhost:5000';
+  
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
 
@@ -20,17 +23,10 @@ const Chat = () => {
 
   useEffect(() => {
     socket.on('message', (message) => {
-      console.log(message);
-    });
-    socket.on('receiveMessage', (message) => {
-      console.log('receiveMessage', message);
       setMessages(prevMessages => [...prevMessages, message]);
     });
     console.log('[REACH EVENTS USE EFFECT]')
-    return () => {
-      socket.off('receiveMessage');
-      socket.off('message');
-    };
+    return () => socket.off('message');
   }, []);
 
   const sendMessage = (e) => {
@@ -43,14 +39,14 @@ const Chat = () => {
 
   return (
     <div className='container'>
-      <div className='rectangle'>
+      <div className='paper'>
         <div className='messages'>
           <h1>Messages</h1>
           {messages.map((message, i) => <Message key={i} message={message} />)}
         </div>
         <form className='form'>
-          <input id='commonSearchTerm' type='text' placeholder='Message' value={message} onChange={({ target: { value } }) => setMessage(value)} />
-          <button id='searchButton' type='submit' onClick={sendMessage}>Send</button>
+          <input className='input' type='text' placeholder='Message' value={message} onChange={({ target: { value } }) => setMessage(value)} />
+          <button className='btn' type='submit' onClick={sendMessage}>Send</button>
         </form>
       </div>
     </div>

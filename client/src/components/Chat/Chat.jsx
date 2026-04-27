@@ -3,7 +3,9 @@ import { useLocation } from 'react-router-dom';
 import io from 'socket.io-client';
 import queryString from 'query-string';
 import './Chat.css';
-import Message from '../Message/Message';
+import InfoBar from '../InfoBar/InfoBar';
+import Input from '../Input/Input';
+import Messages from '../Message/Messages';
 
 let socket;
 
@@ -29,6 +31,9 @@ const Chat = () => {
     socket.on('message', (message) => {
       setMessages(prevMessages => [...prevMessages, message]);
     });
+    socket.on('roomData', ({ room, users }) => {
+      console.log(room, users);
+    })
     return () => {
       socket.emit('close');
       socket.off();
@@ -43,16 +48,11 @@ const Chat = () => {
   };
 
   return (
-    <div className='container'>
-      <div className='paper'>
-        <div className='messages'>
-          <h1>Messages</h1>
-          {messages.map((message, i) => <Message key={i} message={message} />)}
-        </div>
-        <form className='form'>
-          <input className='input' type='text' placeholder='Message' value={message.text} onChange={({ target: { value } }) => setMessage(value)} />
-          <button className='btn' type='submit' onClick={sendMessage}>Send</button>
-        </form>
+    <div className='outerContainer'>
+      <div className="container">
+        <InfoBar />
+        <Messages messages={messages} />
+        <Input sendMessage={sendMessage} setMessage={setMessage} message={message}/>
       </div>
     </div>
   );

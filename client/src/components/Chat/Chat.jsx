@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import io from 'socket.io-client';
 import queryString from 'query-string';
@@ -7,42 +7,44 @@ import InfoBar from '../InfoBar/InfoBar';
 import Input from '../Input/Input';
 import Messages from '../Message/Messages';
 
-let socket;
+// let socket;
 
 const Chat = () => {
   const location = useLocation();
   const ENDPOINT = 'http://localhost:5000';
+  const socketRef = useRef(null);
   
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     const params = queryString.parse(location.search);
-    socket = io(ENDPOINT);
-    socket.emit('join', params, (error) => {
+    socketRef.current = io(ENDPOINT);
+    socketRef.current.emit('join', params, (error) => {
       if (error) alert(error);
     });
     return () => {
-      socket.disconnect();
+      socketRef.current.disconnect();
     };
   }, [location.search]);
 
   useEffect(() => {
-    socket.on('message', (message) => {
+    if (!socketRef.current) return;
+    socketRef.current.on('message', (message) => {
       setMessages(prevMessages => [...prevMessages, message]);
     });
-    socket.on('roomData', ({ room, users }) => {
+    socketRef.current.on('roomData', ({ room, users }) => {
       console.log(room, users);
     })
     return () => {
-      socket.emit('close');
-      socket.off();
+      socketRef.current.off();
     }
   }, []);
 
   const sendMessage = (e) => {
     e.preventDefault();
-    socket.emit('sendMessage', message, () => {
+    if (!socketRef.current) return;
+    socketRef.current.emit('sendMessage', message, () => {
       setMessage('');
     });
   };

@@ -12,7 +12,7 @@ const InfoBar = () => {
         Manuel Di Lena
       </div>
       <div className='rightInnerContainer'>
-        <Link to='/join'><img src={closeIcon} /></Link>
+        <Link to='/'><img src={closeIcon} /></Link>
       </div>
     </div>
   );

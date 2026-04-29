@@ -16,6 +16,7 @@ const Chat = () => {
   
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const [users, setUsers] = useState('');
 
   const { room, name } = useMemo(() => {
     const params = queryString.parse(location.search);
@@ -44,8 +45,8 @@ const Chat = () => {
     const handleMessage = (incomingMessage) => {
       setMessages(prev => [...prev, incomingMessage]);
     };
-    const handleRoomData = ({ room, users }) => {
-      console.log(room, users);
+    const handleRoomData = ({ users }) => {
+      setUsers(users);
     };
     socketRef.current.on('message', handleMessage);
     socketRef.current.on('roomData', handleRoomData);
@@ -69,6 +70,17 @@ const Chat = () => {
         <InfoBar room={room} />
         <Messages messages={messages} name={name} />
         <Input sendMessage={sendMessage} setMessage={setMessage} message={message}/>
+      </div>
+      <div className="textContainer">
+        <h1>Realtime Chat Application 💬</h1>
+        <h2>Made with love using Socket.IO ❤️</h2>
+        <h2>Try it out right now! ⬅️</h2>
+        {users ? (
+          <div>
+            <h2>Currently in this room:</h2>
+            <h2>{users.map(({name}) => <div>{name}</div>)}</h2>
+          </div>
+        ) : null}
       </div>
     </div>
   );

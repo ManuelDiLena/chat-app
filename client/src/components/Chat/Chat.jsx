@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import io from 'socket.io-client';
 import queryString from 'query-string';
@@ -8,42 +8,56 @@ import Input from '../Input/Input';
 import Messages from '../Message/Messages';
 
 // let socket;
+const ENDPOINT = 'http://localhost:5000';
 
 const Chat = () => {
   const location = useLocation();
-  const ENDPOINT = 'http://localhost:5000';
   const socketRef = useRef(null);
   
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
+  const { room, name } = useMemo(() => {
     const params = queryString.parse(location.search);
-    socketRef.current = io(ENDPOINT);
-    socketRef.current.emit('join', params, (error) => {
-      if (error) alert(error);
-    });
-    return () => {
-      socketRef.current.disconnect();
+    return {
+      room: params.room || '',
+      name: params.name || '',
     };
   }, [location.search]);
 
   useEffect(() => {
-    if (!socketRef.current) return;
-    socketRef.current.on('message', (message) => {
-      setMessages(prevMessages => [...prevMessages, message]);
-    });
-    socketRef.current.on('roomData', ({ room, users }) => {
-      console.log(room, users);
-    })
+    socketRef.current = io(ENDPOINT);
     return () => {
-      socketRef.current.off();
-    }
+      socketRef.current.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!socketRef.current || !room || !name) return;
+    socketRef.current.emit('join', { room, name }, (error) => {
+      if (error) alert(error);
+    });
+  }, [room, name]);
+
+  useEffect(() => {
+    if (!socketRef.current) return;
+    const handleMessage = (incomingMessage) => {
+      setMessages(prev => [...prev, incomingMessage]);
+    };
+    const handleRoomData = ({ room, users }) => {
+      console.log(room, users);
+    };
+    socketRef.current.on('message', handleMessage);
+    socketRef.current.on('roomData', handleRoomData);
+    return () => {
+      socketRef.current.off('message', handleMessage);
+      socketRef.current.off('roomData', handleRoomData);
+    };
   }, []);
 
   const sendMessage = (e) => {
     e.preventDefault();
-    if (!socketRef.current) return;
+    if (!socketRef.current || !message.trim()) return;
     socketRef.current.emit('sendMessage', message, () => {
       setMessage('');
     });
@@ -52,7 +66,7 @@ const Chat = () => {
   return (
     <div className='outerContainer'>
       <div className="container">
-        <InfoBar />
+        <InfoBar room={room} />
         <Messages messages={messages} />
         <Input sendMessage={sendMessage} setMessage={setMessage} message={message}/>
       </div>

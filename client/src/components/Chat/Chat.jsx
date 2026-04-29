@@ -34,7 +34,7 @@ const Chat = () => {
 
   useEffect(() => {
     if (!socketRef.current || !room || !name) return;
-    socketRef.current.emit('join', { room, name }, (error) => {
+    socketRef.current.emit('join', { name, room }, (error) => {
       if (error) alert(error);
     });
   }, [room, name]);
@@ -67,7 +67,7 @@ const Chat = () => {
     <div className='outerContainer'>
       <div className="container">
         <InfoBar room={room} />
-        <Messages messages={messages} />
+        <Messages messages={messages} name={name} />
         <Input sendMessage={sendMessage} setMessage={setMessage} message={message}/>
       </div>
     </div>

@@ -4,10 +4,15 @@
   text-align: center;
   height: 100vh;
   align-items: center;
+  background-color: #121212;
 }
 
 .joinInnerContainer {
   width: 30%;
+}
+
+.heading {
+  color: white;
 }
 
 .joinInput {
@@ -30,4 +35,10 @@
 
 .mt-20 {
   margin-top: 20px;
+}
+
+@media (min-width: 320px) and (max-width: 480px) {
+  .joinInnerContainer {
+    width: 90%;
+  }
 }

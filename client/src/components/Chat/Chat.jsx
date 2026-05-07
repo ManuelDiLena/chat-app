@@ -4,8 +4,9 @@ import io from 'socket.io-client';
 import queryString from 'query-string';
 import './Chat.css';
 import InfoBar from '../InfoBar/InfoBar';
+import Input from '../Input/Input';
 import Messages from '../Message/Messages';
-import onlineIcon from '../../assets/onlineIcon.png';
+import TextContainer from '../TextContainer/TextContainer';
 
 // let socket;
 const ENDPOINT = 'http://localhost:5000';
@@ -69,40 +70,9 @@ const Chat = () => {
       <div className='container'>
         <InfoBar room={room} />
         <Messages messages={messages} name={name} />
-        <form className='form'>
-          <input
-            className='input'
-            type='text'
-            placeholder='Type a message...'
-            value={message}
-            onChange={({ target: { value } }) => setMessage(value)}
-            onKeyPress={e => e.key === 'Enter' ? sendMessage(e) : null}
-          />
-          <button className='buttonSend' onClick={e => sendMessage(e)}>Send</button>
-        </form>
+        <Input message={message} setMessage={setMessage} sendMessage={sendMessage} />
       </div>
-      <div className='textContainer'>
-        <div>
-          <h1>Realtime Chat Application <span role='img' aria-label='emoji'>💬</span></h1>
-          <h2>Created with React, Express, Node and Socket.IO <span role='img' aria-label='emoji'>❤️</span></h2>
-          <h2>Try it out right now! <span role='img' aria-label='emoji'>⬅️</span></h2>
-        </div>
-        {users ? (
-          <div>
-            <h1>People currently chatting:</h1>
-            <div className='activeContainer'>
-              <h2>
-                {users.map(({name}) => (
-                  <div key={name} className='activeContainer'>
-                    {name}
-                    <img alt='Online Icon' src={onlineIcon} />
-                  </div>
-                ))}
-              </h2>
-            </div>
-          </div>
-        ) : null}
-      </div>
+      <TextContainer users={users} />
     </div>
   );
 }

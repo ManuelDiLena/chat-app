@@ -6,6 +6,7 @@ import './Chat.css';
 import InfoBar from '../InfoBar/InfoBar';
 import Input from '../Input/Input';
 import Messages from '../Message/Messages';
+import onlineIcon from '../../assets/onlineIcon.png';
 
 // let socket;
 const ENDPOINT = 'http://localhost:5000';
@@ -76,10 +77,19 @@ const Chat = () => {
         <h2>Made with love using Socket.IO ❤️</h2>
         <h2>Try it out right now! ⬅️</h2>
         {users ? (
-          <div>
-            <h2>Currently in this room:</h2>
-            <h2>{users.map(({name}) => <div>{name}</div>)}</h2>
-          </div>
+          <>
+            <h2>Currently chatting:</h2>
+            <div className='activeContainer'>
+              <h2>
+                {users.map(({name}) => (
+                  <div key={name} className='activeContainer'>
+                    {name}
+                    <img alt='Online Icon' src={onlineIcon} />
+                  </div>
+                ))}
+              </h2>
+            </div>
+          </>
         ) : null}
       </div>
     </div>

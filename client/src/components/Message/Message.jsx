@@ -4,7 +4,6 @@ import './Message.css';
 
 const Message = ({ message: { text, user }, name }) => {
   let isSentByCurrentUser = false;
-  console.log(user, name);
 
   if (user === name.toLowerCase()) {
     isSentByCurrentUser = true;

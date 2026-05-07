@@ -4,7 +4,7 @@
   text-align: center;
   height: 100vh;
   align-items: center;
-  background-color: #1A1A1D;
+  background-color: #121212;
 }
 
 .joinInnerContainer {
@@ -14,7 +14,8 @@
 .heading {
   color: white;
   font-size: 2.5em;
-  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid white;
 }
 
 .joinInput {

@@ -32,6 +32,7 @@ html, body {
   margin-left: 100px;
   color: white;
   height: 60%;
+  justify-content: space-between;
 }
 
 .activeContainer {
@@ -41,6 +42,38 @@ html, body {
 
 .activeContainer img {
   padding-left: 10px;
+}
+
+.input {
+  border: none;
+  border-radius: 0;
+  padding: 5%;
+  width: 80%;
+  font-size: 1.2em;
+}
+
+input:focus, textarea:focus, select:focus{
+  outline: none;
+}
+
+.form {
+  display: flex;
+  border-top: 2px solid #D3D3D3;
+}
+
+.buttonSend {
+  color: #fff !important;
+  text-transform: uppercase;
+  text-decoration: none;
+  background: #2979FF;
+  padding: 20px;
+  display: inline-block;
+  border: none;
+  width: 20%;
+}
+
+.textContainer h1 {
+  margin-bottom: 0px;
 }
 
 @media (min-width: 320px) and (max-width: 480px) {

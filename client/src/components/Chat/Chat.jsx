@@ -4,7 +4,6 @@ import io from 'socket.io-client';
 import queryString from 'query-string';
 import './Chat.css';
 import InfoBar from '../InfoBar/InfoBar';
-import Input from '../Input/Input';
 import Messages from '../Message/Messages';
 import onlineIcon from '../../assets/onlineIcon.png';
 
@@ -67,18 +66,30 @@ const Chat = () => {
 
   return (
     <div className='outerContainer'>
-      <div className="container">
+      <div className='container'>
         <InfoBar room={room} />
         <Messages messages={messages} name={name} />
-        <Input sendMessage={sendMessage} setMessage={setMessage} message={message}/>
+        <form className='form'>
+          <input
+            className='input'
+            type='text'
+            placeholder='Type a message...'
+            value={message}
+            onChange={({ target: { value } }) => setMessage(value)}
+            onKeyPress={e => e.key === 'Enter' ? sendMessage(e) : null}
+          />
+          <button className='buttonSend' onClick={e => sendMessage(e)}>Send</button>
+        </form>
       </div>
-      <div className="textContainer">
-        <h1>Realtime Chat Application 💬</h1>
-        <h2>Made with love using Socket.IO ❤️</h2>
-        <h2>Try it out right now! ⬅️</h2>
+      <div className='textContainer'>
+        <div>
+          <h1>Realtime Chat Application <span role='img' aria-label='emoji'>💬</span></h1>
+          <h2>Created with React, Express, Node and Socket.IO <span role='img' aria-label='emoji'>❤️</span></h2>
+          <h2>Try it out right now! <span role='img' aria-label='emoji'>⬅️</span></h2>
+        </div>
         {users ? (
-          <>
-            <h2>Currently chatting:</h2>
+          <div>
+            <h1>People currently chatting:</h1>
             <div className='activeContainer'>
               <h2>
                 {users.map(({name}) => (
@@ -89,7 +100,7 @@ const Chat = () => {
                 ))}
               </h2>
             </div>
-          </>
+          </div>
         ) : null}
       </div>
     </div>
